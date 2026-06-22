@@ -88,3 +88,115 @@ export async function updatePrice(rowIndex: number, newPrice: number): Promise<v
     },
   });
 }
+
+/** Generate next sequential ID based on existing rows */
+function nextId(existingFormulas: Formula[]): string {
+  let maxNum = 0;
+  for (const f of existingFormulas) {
+    const n = parseInt(f.id, 10);
+    if (!isNaN(n) && n > maxNum) maxNum = n;
+  }
+  return String(maxNum + 1);
+}
+
+/** Append a new formula row to the spreadsheet */
+export async function addFormulaRow(fields: {
+  categoria: string;
+  protocolo: string;
+  preco: number;
+  ativos: string;
+  observacao: string;
+}): Promise<void> {
+  if (!fields.protocolo.trim()) throw new Error("Título é obrigatório");
+  if (!fields.categoria.trim()) throw new Error("Categoria é obrigatória");
+  if (!Number.isFinite(fields.preco) || fields.preco < 0) throw new Error("Preço inválido");
+
+  const existing = await fetchFormulas();
+  const id = nextId(existing);
+
+  const sheets = getSheetsClient();
+  await sheets.spreadsheets.values.append({
+    spreadsheetId: SHEET_ID,
+    range: `${TAB}!A:F`,
+    valueInputOption: "USER_ENTERED",
+    insertDataOption: "INSERT_ROWS",
+    requestBody: {
+      values: [[
+        id,
+        fields.categoria.trim(),
+        fields.protocolo.trim(),
+        fields.preco,
+        fields.ativos.trim(),
+        fields.observacao.trim(),
+      ]],
+    },
+  });
+}
+
+/** Rename a category across all rows that match */
+export async function renameCategoryRows(
+  oldName: string,
+  newName: string,
+): Promise<number> {
+  if (!oldName.trim() || !newName.trim()) throw new Error("Nomes inválidos");
+  if (oldName.trim() === newName.trim()) return 0;
+
+  const formulas = await fetchFormulas();
+  const matching = formulas.filter(
+    (f) => f.categoria.toLowerCase() === oldName.trim().toLowerCase(),
+  );
+
+  if (matching.length === 0) throw new Error("Categoria não encontrada");
+
+  const sheets = getSheetsClient();
+
+  // Batch update all matching rows
+  const data = matching.map((f) => ({
+    range: `${TAB}!B${f.rowIndex}`,
+    values: [[newName.trim()]],
+  }));
+
+  await sheets.spreadsheets.values.batchUpdate({
+    spreadsheetId: SHEET_ID,
+    requestBody: {
+      valueInputOption: "USER_ENTERED",
+      data,
+    },
+  });
+
+  return matching.length;
+}
+
+/** Delete a specific formula row completely */
+export async function deleteFormulaRow(rowIndex: number): Promise<void> {
+  if (!Number.isInteger(rowIndex) || rowIndex < 2) throw new Error("Linha inválida");
+
+  const sheets = getSheetsClient();
+  
+  // First, get the specific sheetId for the TAB
+  const ss = await sheets.spreadsheets.get({ spreadsheetId: SHEET_ID });
+  const sheet = ss.data.sheets?.find(s => s.properties?.title === TAB);
+  const sheetId = sheet?.properties?.sheetId;
+
+  if (sheetId === undefined) throw new Error("Aba não encontrada");
+
+  // The sheets API uses 0-based indexing for deleteDimension
+  // If rowIndex is 2 (row 2 in spreadsheet), startIndex is 1 and endIndex is 2
+  await sheets.spreadsheets.batchUpdate({
+    spreadsheetId: SHEET_ID,
+    requestBody: {
+      requests: [
+        {
+          deleteDimension: {
+            range: {
+              sheetId: sheetId,
+              dimension: "ROWS",
+              startIndex: rowIndex - 1,
+              endIndex: rowIndex,
+            },
+          },
+        },
+      ],
+    },
+  });
+}
