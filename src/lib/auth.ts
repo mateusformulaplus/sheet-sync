@@ -1,6 +1,7 @@
 // Client-safe auth. Uses localStorage for session (works in cross-site iframe).
 // Server validates the password on each protected mutation.
 import { createServerFn } from "@tanstack/react-start";
+import { redirect } from "@tanstack/react-router";
 
 export const STORAGE_KEY = "fplus_pw";
 
@@ -11,12 +12,29 @@ export const login = createServerFn({ method: "POST" })
     return { password: d.password };
   })
   .handler(async ({ data }) => {
-    const { verifyPassword } = await import("./auth-cookies.server");
+    const { verifyPassword, setSessionCookie } = await import("./auth-cookies.server");
     if (!verifyPassword(data.password)) {
       return { ok: false as const, error: "Senha incorreta" };
     }
+    setSessionCookie();
     return { ok: true as const };
   });
+
+export const logout = createServerFn({ method: "POST" }).handler(async () => {
+  const { clearSessionCookie } = await import("./auth-cookies.server");
+  clearSessionCookie();
+});
+
+/**
+ * Server-side session guard. Call inside `beforeLoad` of protected routes.
+ * If no valid session cookie is found, throws a redirect to "/".
+ */
+export const requireAuth = createServerFn({ method: "GET" }).handler(async () => {
+  const { isSessionValid } = await import("./auth-cookies.server");
+  if (!isSessionValid()) {
+    throw redirect({ to: "/" });
+  }
+});
 
 export function clientIsAuthenticated(): boolean {
   if (typeof window === "undefined") return false;

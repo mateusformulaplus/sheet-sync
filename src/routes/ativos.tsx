@@ -38,7 +38,7 @@ import {
   Copy,
   Check,
 } from "lucide-react";
-import { clientIsAuthenticated, clientGetPassword, clientClearPassword } from "@/lib/auth";
+import { clientIsAuthenticated, clientGetPassword, clientClearPassword, logout, requireAuth } from "@/lib/auth";
 import { listFormulas, setPrice, addFormula, renameCategory, deleteFormula } from "@/lib/formulas.functions";
 
 export const Route = createFileRoute("/ativos")({
@@ -49,8 +49,12 @@ export const Route = createFileRoute("/ativos")({
       { name: "robots", content: "noindex" },
     ],
   }),
-  beforeLoad: () => {
-    if (typeof window !== "undefined" && !clientIsAuthenticated()) {
+  beforeLoad: async () => {
+    // Server-side guard: checks the HTTP-only session cookie during SSR.
+    // On the client, also checks localStorage to catch cleared sessions.
+    if (typeof window === "undefined") {
+      await requireAuth();
+    } else if (!clientIsAuthenticated()) {
       throw redirect({ to: "/" });
     }
   },
@@ -256,8 +260,11 @@ function AtivosPage() {
   const filteredCount = groups.reduce((acc, [, items]) => acc + items.length, 0);
 
   // ── Actions ──
+  const logoutFn = useServerFn(logout);
+
   async function onLogout() {
     clientClearPassword();
+    await logoutFn(); // clears the HTTP-only session cookie server-side
     await router.navigate({ to: "/" });
   }
 

@@ -5,7 +5,7 @@ import { Logo } from "@/components/Logo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { login, clientIsAuthenticated, clientSetPassword } from "@/lib/auth";
+import { login, clientIsAuthenticated, clientSetPassword, requireAuth } from "@/lib/auth";
 import { Lock, ArrowRight, ShieldCheck } from "lucide-react";
 
 export const Route = createFileRoute("/")(  {
@@ -15,8 +15,14 @@ export const Route = createFileRoute("/")(  {
       { name: "description", content: "Portal de fórmulas e preços da Fórmula Plus." },
     ],
   }),
-  beforeLoad: () => {
-    if (typeof window !== "undefined" && clientIsAuthenticated()) {
+  beforeLoad: async () => {
+    // Server-side: if session cookie is valid, redirect away from login page.
+    if (typeof window === "undefined") {
+      try { await requireAuth(); throw redirect({ to: "/ativos" }); } catch (e: unknown) {
+        // If requireAuth threw a redirect, re-throw it; otherwise (no session) stay on login.
+        if (e && typeof e === "object" && "_isRedirect" in e) throw e;
+      }
+    } else if (clientIsAuthenticated()) {
       throw redirect({ to: "/ativos" });
     }
   },
