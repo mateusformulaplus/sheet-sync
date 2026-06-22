@@ -727,6 +727,7 @@ function AtivosPage() {
           }
         }}
       >
+        
         <DialogContent className="sm:max-w-md rounded-2xl border-border/50 p-0 overflow-hidden">
           <div className="h-1 brand-gradient" />
           <div className="px-6 pt-5 pb-6 sm:px-7">
