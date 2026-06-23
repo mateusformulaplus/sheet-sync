@@ -1,6 +1,6 @@
 import { i as TSS_SERVER_FUNCTION, l as createServerFn } from "./esm-Dova13aH.mjs";
-import { t as getServerFnById } from "../__23tanstack-start-server-fn-resolver-9Zbp-wJW.mjs";
-//#region node_modules/.nitro/vite/services/ssr/assets/auth-Cng1v34u.js
+import { t as getServerFnById } from "../__23tanstack-start-server-fn-resolver-WuDkeQMz.mjs";
+//#region node_modules/.nitro/vite/services/ssr/assets/auth-C8iYyVIi.js
 var createSsrRpc = (functionId) => {
 	const url = "/_serverFn/" + functionId;
 	const serverFnMeta = { id: functionId };
@@ -13,7 +13,7 @@ var createSsrRpc = (functionId) => {
 		[TSS_SERVER_FUNCTION]: true
 	});
 };
-var STORAGE_KEY = "fplus_pw";
+var STORAGE_KEY = "fplus_token";
 var login = createServerFn({ method: "POST" }).inputValidator((d) => {
 	if (!d || typeof d.password !== "string") throw new Error("Senha obrigatória");
 	if (d.password.length > 200) throw new Error("Senha inválida");
@@ -29,15 +29,15 @@ function clientIsAuthenticated() {
 	if (typeof window === "undefined") return false;
 	return !!window.localStorage.getItem(STORAGE_KEY);
 }
-function clientGetPassword() {
+function clientGetToken() {
 	if (typeof window === "undefined") return "";
-	return window.localStorage.getItem("fplus_pw") ?? "";
+	return window.localStorage.getItem("fplus_token") ?? "";
 }
-function clientSetPassword(pw) {
-	window.localStorage.setItem(STORAGE_KEY, pw);
+function clientSetToken(token) {
+	window.localStorage.setItem(STORAGE_KEY, token);
 }
-function clientClearPassword() {
+function clientClearToken() {
 	window.localStorage.removeItem(STORAGE_KEY);
 }
 //#endregion
-export { createSsrRpc as a, requireAuth as c, clientSetPassword as i, clientGetPassword as n, login as o, clientIsAuthenticated as r, logout as s, clientClearPassword as t };
+export { createSsrRpc as a, requireAuth as c, clientSetToken as i, clientGetToken as n, login as o, clientIsAuthenticated as r, logout as s, clientClearToken as t };

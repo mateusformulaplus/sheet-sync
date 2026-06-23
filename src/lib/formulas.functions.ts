@@ -7,18 +7,20 @@ export const listFormulas = createServerFn({ method: "GET" }).handler(async () =
 });
 
 export const setPrice = createServerFn({ method: "POST" })
-  .inputValidator((d: { rowIndex: number; preco: number; password: string }) => {
+  .inputValidator((d: { rowIndex: number; preco: number; token?: string }) => {
     if (!d || typeof d.rowIndex !== "number" || typeof d.preco !== "number") {
       throw new Error("Dados inválidos");
     }
-    if (typeof d.password !== "string") throw new Error("Senha obrigatória");
+    if (d.token !== undefined && typeof d.token !== "string") {
+      throw new Error("Token inválido");
+    }
     if (d.preco < 0 || d.preco > 1_000_000) throw new Error("Preço fora do intervalo");
     return d;
   })
   .handler(async ({ data }) => {
-    const { assertPassword } = await import("./auth-cookies.server");
+    const { assertAuth } = await import("./auth-cookies.server");
     const { updatePrice } = await import("./sheets.server");
-    assertPassword(data.password);
+    assertAuth(data.token);
     await updatePrice(data.rowIndex, data.preco);
     return { ok: true };
   });
@@ -31,12 +33,14 @@ export const addFormula = createServerFn({ method: "POST" })
       preco: number;
       ativos: string;
       observacao: string;
-      password: string;
+      token?: string;
     }) => {
       if (!d || typeof d.protocolo !== "string" || typeof d.categoria !== "string") {
         throw new Error("Dados inválidos");
       }
-      if (typeof d.password !== "string") throw new Error("Senha obrigatória");
+      if (d.token !== undefined && typeof d.token !== "string") {
+        throw new Error("Token inválido");
+      }
       if (typeof d.preco !== "number" || d.preco < 0 || d.preco > 1_000_000) {
         throw new Error("Preço fora do intervalo");
       }
@@ -44,9 +48,9 @@ export const addFormula = createServerFn({ method: "POST" })
     },
   )
   .handler(async ({ data }) => {
-    const { assertPassword } = await import("./auth-cookies.server");
+    const { assertAuth } = await import("./auth-cookies.server");
     const { addFormulaRow } = await import("./sheets.server");
-    assertPassword(data.password);
+    assertAuth(data.token);
     await addFormulaRow({
       categoria: data.categoria,
       protocolo: data.protocolo,
@@ -59,33 +63,37 @@ export const addFormula = createServerFn({ method: "POST" })
 
 export const renameCategory = createServerFn({ method: "POST" })
   .inputValidator(
-    (d: { oldName: string; newName: string; password: string }) => {
+    (d: { oldName: string; newName: string; token?: string }) => {
       if (!d || typeof d.oldName !== "string" || typeof d.newName !== "string") {
         throw new Error("Dados inválidos");
       }
-      if (typeof d.password !== "string") throw new Error("Senha obrigatória");
+      if (d.token !== undefined && typeof d.token !== "string") {
+        throw new Error("Token inválido");
+      }
       if (!d.oldName.trim() || !d.newName.trim()) throw new Error("Nomes inválidos");
       return d;
     },
   )
   .handler(async ({ data }) => {
-    const { assertPassword } = await import("./auth-cookies.server");
+    const { assertAuth } = await import("./auth-cookies.server");
     const { renameCategoryRows } = await import("./sheets.server");
-    assertPassword(data.password);
+    assertAuth(data.token);
     const count = await renameCategoryRows(data.oldName, data.newName);
     return { ok: true, count };
   });
 
 export const deleteFormula = createServerFn({ method: "POST" })
-  .validator((d: { rowIndex: number; password: string }) => {
+  .validator((d: { rowIndex: number; token?: string }) => {
     if (!d || typeof d.rowIndex !== "number") throw new Error("Dados inválidos");
-    if (typeof d.password !== "string") throw new Error("Senha obrigatória");
+    if (d.token !== undefined && typeof d.token !== "string") {
+      throw new Error("Token inválido");
+    }
     return d;
   })
   .handler(async ({ data }) => {
-    const { assertPassword } = await import("./auth-cookies.server");
+    const { assertAuth } = await import("./auth-cookies.server");
     const { deleteFormulaRow } = await import("./sheets.server");
-    assertPassword(data.password);
+    assertAuth(data.token);
     await deleteFormulaRow(data.rowIndex);
     return { ok: true };
   });

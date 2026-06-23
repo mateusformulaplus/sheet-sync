@@ -5,7 +5,7 @@ import { Logo } from "@/components/Logo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { login, clientIsAuthenticated, clientSetPassword, requireAuth } from "@/lib/auth";
+import { login, clientIsAuthenticated, clientSetToken, requireAuth } from "@/lib/auth";
 import { Lock, ArrowRight, ShieldCheck } from "lucide-react";
 
 export const Route = createFileRoute("/")(  {
@@ -45,7 +45,9 @@ function LoginPage() {
       if (!res.ok) {
         setError(res.error ?? "Senha incorreta");
       } else {
-        clientSetPassword(password);
+        if (res.token) {
+          clientSetToken(res.token);
+        }
         await router.navigate({ to: "/ativos" });
       }
     } catch (err) {

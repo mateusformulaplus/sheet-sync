@@ -1,11 +1,11 @@
 import { o as __toESM } from "../_runtime.mjs";
-import { g as useRouter } from "../_libs/@tanstack/react-router+[...].mjs";
-import { u as require_react } from "../_libs/@floating-ui/react-dom+[...].mjs";
 import { s as require_jsx_runtime } from "../_libs/@radix-ui/react-arrow+[...].mjs";
-import { i as Logo, n as Input, o as useServerFn, r as Label, t as Button } from "./label-BEIxUHTW.mjs";
-import { i as clientSetPassword, o as login } from "./auth-Cng1v34u.mjs";
+import { u as require_react } from "../_libs/@floating-ui/react-dom+[...].mjs";
 import { d as Lock, i as ShieldCheck, y as ArrowRight } from "../_libs/lucide-react.mjs";
-//#region node_modules/.nitro/vite/services/ssr/assets/routes-BPzgt0zw.js
+import { g as useRouter } from "../_libs/@tanstack/react-router+[...].mjs";
+import { i as Logo, n as Input, o as useServerFn, r as Label, t as Button } from "./label-BEIxUHTW.mjs";
+import { i as clientSetToken, o as login } from "./auth-C8iYyVIi.mjs";
+//#region node_modules/.nitro/vite/services/ssr/assets/routes-0XGw2S4q.js
 var import_react = /* @__PURE__ */ __toESM(require_react());
 var import_jsx_runtime = require_jsx_runtime();
 function LoginPage() {
@@ -22,7 +22,7 @@ function LoginPage() {
 			const res = await loginFn({ data: { password } });
 			if (!res.ok) setError(res.error ?? "Senha incorreta");
 			else {
-				clientSetPassword(password);
+				if (res.token) clientSetToken(res.token);
 				await router.navigate({ to: "/ativos" });
 			}
 		} catch (err) {

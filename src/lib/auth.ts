@@ -1,9 +1,9 @@
 // Client-safe auth. Uses localStorage for session (works in cross-site iframe).
-// Server validates the password on each protected mutation.
+// Server validates the JWT token on each protected mutation.
 import { createServerFn } from "@tanstack/react-start";
 import { redirect } from "@tanstack/react-router";
 
-export const STORAGE_KEY = "fplus_pw";
+export const STORAGE_KEY = "fplus_token";
 
 export const login = createServerFn({ method: "POST" })
   .inputValidator((d: { password: string }) => {
@@ -13,11 +13,17 @@ export const login = createServerFn({ method: "POST" })
   })
   .handler(async ({ data }) => {
     const { verifyPassword, setSessionCookie } = await import("./auth-cookies.server");
+    const { signJwt } = await import("./jwt.server");
+
     if (!verifyPassword(data.password)) {
       return { ok: false as const, error: "Senha incorreta" };
     }
-    setSessionCookie();
-    return { ok: true as const };
+
+    // Generate JWT token for this session
+    const token = signJwt({ sub: "admin" });
+    setSessionCookie(token);
+
+    return { ok: true as const, token };
   });
 
 export const logout = createServerFn({ method: "POST" }).handler(async () => {
@@ -41,15 +47,16 @@ export function clientIsAuthenticated(): boolean {
   return !!window.localStorage.getItem(STORAGE_KEY);
 }
 
-export function clientGetPassword(): string {
+export function clientGetToken(): string {
   if (typeof window === "undefined") return "";
   return window.localStorage.getItem(STORAGE_KEY) ?? "";
 }
 
-export function clientSetPassword(pw: string) {
-  window.localStorage.setItem(STORAGE_KEY, pw);
+export function clientSetToken(token: string) {
+  window.localStorage.setItem(STORAGE_KEY, token);
 }
 
-export function clientClearPassword() {
+export function clientClearToken() {
   window.localStorage.removeItem(STORAGE_KEY);
 }
+

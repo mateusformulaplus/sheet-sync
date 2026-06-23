@@ -1,16 +1,16 @@
 import { o as __toESM } from "../_runtime.mjs";
+import { s as require_jsx_runtime } from "../_libs/@radix-ui/react-arrow+[...].mjs";
+import { u as require_react } from "../_libs/@floating-ui/react-dom+[...].mjs";
+import { _ as ChevronDown, a as Search, b as ArrowDownToLine, c as Pencil, f as FolderPen, g as ChevronRight, h as ChevronUp, m as Copy, n as Trash2, o as RefreshCw, p as ExternalLink, r as Tag, s as Plus, t as X, u as LogOut, v as Check } from "../_libs/lucide-react.mjs";
 import { g as useRouter } from "../_libs/@tanstack/react-router+[...].mjs";
 import { l as createServerFn } from "./esm-Dova13aH.mjs";
-import { u as require_react } from "../_libs/@floating-ui/react-dom+[...].mjs";
-import { s as require_jsx_runtime } from "../_libs/@radix-ui/react-arrow+[...].mjs";
 import { t as cva } from "../_libs/class-variance-authority+clsx.mjs";
 import { a as cn, i as Logo, n as Input, o as useServerFn, r as Label, t as Button } from "./label-BEIxUHTW.mjs";
-import { a as createSsrRpc, n as clientGetPassword, s as logout, t as clientClearPassword } from "./auth-Cng1v34u.mjs";
+import { a as createSsrRpc, n as clientGetToken, s as logout, t as clientClearToken } from "./auth-C8iYyVIi.mjs";
 import { i as useQueryClient, n as useQuery, t as useMutation } from "../_libs/tanstack__react-query.mjs";
 import { a as DialogOverlay$1, i as DialogDescription$1, n as DialogClose, o as DialogPortal$1, r as DialogContent$1, s as DialogTitle$1, t as Dialog$1 } from "../_libs/@radix-ui/react-dialog+[...].mjs";
-import { _ as ChevronDown, a as Search, b as ArrowDownToLine, c as Pencil, f as FolderPen, g as ChevronRight, h as ChevronUp, m as Copy, n as Trash2, o as RefreshCw, p as ExternalLink, r as Tag, s as Plus, t as X, u as LogOut, v as Check } from "../_libs/lucide-react.mjs";
 import { a as SelectItemIndicator, c as SelectPortal, d as SelectSeparator$1, f as SelectTrigger$1, i as SelectItem$1, l as SelectScrollDownButton$1, m as SelectViewport, n as SelectContent$1, o as SelectItemText, p as SelectValue$1, r as SelectIcon, s as SelectLabel$1, t as Select$1, u as SelectScrollUpButton$1 } from "../_libs/@radix-ui/react-select+[...].mjs";
-//#region node_modules/.nitro/vite/services/ssr/assets/ativos-BkBmXtNI.js
+//#region node_modules/.nitro/vite/services/ssr/assets/ativos-Dz17Ec6T.js
 var import_react = /* @__PURE__ */ __toESM(require_react());
 var import_jsx_runtime = require_jsx_runtime();
 var Dialog = Dialog$1;
@@ -137,25 +137,25 @@ function Badge({ className, variant, ...props }) {
 var listFormulas = createServerFn({ method: "GET" }).handler(createSsrRpc("e597db70b3b55b72f362907825156b04d934b7db64bade1c0660a169015446ed"));
 var setPrice = createServerFn({ method: "POST" }).inputValidator((d) => {
 	if (!d || typeof d.rowIndex !== "number" || typeof d.preco !== "number") throw new Error("Dados inválidos");
-	if (typeof d.password !== "string") throw new Error("Senha obrigatória");
+	if (d.token !== void 0 && typeof d.token !== "string") throw new Error("Token inválido");
 	if (d.preco < 0 || d.preco > 1e6) throw new Error("Preço fora do intervalo");
 	return d;
 }).handler(createSsrRpc("0edabfb569494433799c215b4596fb8a8d76b5a69500bec109aa01fc54d25853"));
 var addFormula = createServerFn({ method: "POST" }).inputValidator((d) => {
 	if (!d || typeof d.protocolo !== "string" || typeof d.categoria !== "string") throw new Error("Dados inválidos");
-	if (typeof d.password !== "string") throw new Error("Senha obrigatória");
+	if (d.token !== void 0 && typeof d.token !== "string") throw new Error("Token inválido");
 	if (typeof d.preco !== "number" || d.preco < 0 || d.preco > 1e6) throw new Error("Preço fora do intervalo");
 	return d;
 }).handler(createSsrRpc("553f28ac812ceea06f5123477c5dde56965849dd830acc0c7886f83d18f87748"));
 var renameCategory = createServerFn({ method: "POST" }).inputValidator((d) => {
 	if (!d || typeof d.oldName !== "string" || typeof d.newName !== "string") throw new Error("Dados inválidos");
-	if (typeof d.password !== "string") throw new Error("Senha obrigatória");
+	if (d.token !== void 0 && typeof d.token !== "string") throw new Error("Token inválido");
 	if (!d.oldName.trim() || !d.newName.trim()) throw new Error("Nomes inválidos");
 	return d;
 }).handler(createSsrRpc("f23c2bc749835e674ab9b201095eff376fcea76ffe77b6c3742bbfb5c9bfcec5"));
 var deleteFormula = createServerFn({ method: "POST" }).validator((d) => {
 	if (!d || typeof d.rowIndex !== "number") throw new Error("Dados inválidos");
-	if (typeof d.password !== "string") throw new Error("Senha obrigatória");
+	if (d.token !== void 0 && typeof d.token !== "string") throw new Error("Token inválido");
 	return d;
 }).handler(createSsrRpc("6d2cc2f9270a67c86391c6978f2990dda7dabb07add04fe53e6609acc1acd7c1"));
 var brl = (n) => new Intl.NumberFormat("pt-BR", {
@@ -198,7 +198,7 @@ function AtivosPage() {
 	const priceMutation = useMutation({
 		mutationFn: (vars) => setPriceFn({ data: {
 			...vars,
-			password: clientGetPassword()
+			token: clientGetToken()
 		} }),
 		onSuccess: () => {
 			qc.invalidateQueries({ queryKey: ["formulas"] });
@@ -210,7 +210,7 @@ function AtivosPage() {
 	const addMutation = useMutation({
 		mutationFn: (vars) => addFormulaFn({ data: {
 			...vars,
-			password: clientGetPassword()
+			token: clientGetToken()
 		} }),
 		onSuccess: () => {
 			qc.invalidateQueries({ queryKey: ["formulas"] });
@@ -221,7 +221,7 @@ function AtivosPage() {
 	const renameMutation = useMutation({
 		mutationFn: (vars) => renameCategoryFn({ data: {
 			...vars,
-			password: clientGetPassword()
+			token: clientGetToken()
 		} }),
 		onSuccess: () => {
 			qc.invalidateQueries({ queryKey: ["formulas"] });
@@ -233,7 +233,7 @@ function AtivosPage() {
 	const deleteMutation = useMutation({
 		mutationFn: (vars) => deleteFormulaFn({ data: {
 			...vars,
-			password: clientGetPassword()
+			token: clientGetToken()
 		} }),
 		onSuccess: () => {
 			qc.invalidateQueries({ queryKey: ["formulas"] });
@@ -287,7 +287,7 @@ function AtivosPage() {
 	const filteredCount = groups.reduce((acc, [, items]) => acc + items.length, 0);
 	const logoutFn = useServerFn(logout);
 	async function onLogout() {
-		clientClearPassword();
+		clientClearToken();
 		await logoutFn();
 		await router.navigate({ to: "/" });
 	}

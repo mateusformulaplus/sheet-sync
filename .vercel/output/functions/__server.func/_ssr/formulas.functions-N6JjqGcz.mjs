@@ -1,6 +1,6 @@
 import { l as createServerFn } from "./esm-Dova13aH.mjs";
 import { t as createServerRpc } from "./createServerRpc-WJgk8O8C.mjs";
-//#region node_modules/.nitro/vite/services/ssr/assets/formulas.functions-MVeWhmdl.js
+//#region node_modules/.nitro/vite/services/ssr/assets/formulas.functions-N6JjqGcz.js
 var listFormulas_createServerFn_handler = createServerRpc({
 	id: "e597db70b3b55b72f362907825156b04d934b7db64bade1c0660a169015446ed",
 	name: "listFormulas",
@@ -20,13 +20,13 @@ var setPrice_createServerFn_handler = createServerRpc({
 }, (opts) => setPrice.__executeServer(opts));
 var setPrice = createServerFn({ method: "POST" }).inputValidator((d) => {
 	if (!d || typeof d.rowIndex !== "number" || typeof d.preco !== "number") throw new Error("Dados inválidos");
-	if (typeof d.password !== "string") throw new Error("Senha obrigatória");
+	if (d.token !== void 0 && typeof d.token !== "string") throw new Error("Token inválido");
 	if (d.preco < 0 || d.preco > 1e6) throw new Error("Preço fora do intervalo");
 	return d;
 }).handler(setPrice_createServerFn_handler, async ({ data }) => {
-	const { assertPassword } = await import("./auth-cookies.server-CaMv2Sys.mjs");
+	const { assertAuth } = await import("./auth-cookies.server-ONrsHARe.mjs");
 	const { updatePrice } = await import("./sheets.server-BAIrcMcb.mjs");
-	assertPassword(data.password);
+	assertAuth(data.token);
 	await updatePrice(data.rowIndex, data.preco);
 	return { ok: true };
 });
@@ -37,13 +37,13 @@ var addFormula_createServerFn_handler = createServerRpc({
 }, (opts) => addFormula.__executeServer(opts));
 var addFormula = createServerFn({ method: "POST" }).inputValidator((d) => {
 	if (!d || typeof d.protocolo !== "string" || typeof d.categoria !== "string") throw new Error("Dados inválidos");
-	if (typeof d.password !== "string") throw new Error("Senha obrigatória");
+	if (d.token !== void 0 && typeof d.token !== "string") throw new Error("Token inválido");
 	if (typeof d.preco !== "number" || d.preco < 0 || d.preco > 1e6) throw new Error("Preço fora do intervalo");
 	return d;
 }).handler(addFormula_createServerFn_handler, async ({ data }) => {
-	const { assertPassword } = await import("./auth-cookies.server-CaMv2Sys.mjs");
+	const { assertAuth } = await import("./auth-cookies.server-ONrsHARe.mjs");
 	const { addFormulaRow } = await import("./sheets.server-BAIrcMcb.mjs");
-	assertPassword(data.password);
+	assertAuth(data.token);
 	await addFormulaRow({
 		categoria: data.categoria,
 		protocolo: data.protocolo,
@@ -60,13 +60,13 @@ var renameCategory_createServerFn_handler = createServerRpc({
 }, (opts) => renameCategory.__executeServer(opts));
 var renameCategory = createServerFn({ method: "POST" }).inputValidator((d) => {
 	if (!d || typeof d.oldName !== "string" || typeof d.newName !== "string") throw new Error("Dados inválidos");
-	if (typeof d.password !== "string") throw new Error("Senha obrigatória");
+	if (d.token !== void 0 && typeof d.token !== "string") throw new Error("Token inválido");
 	if (!d.oldName.trim() || !d.newName.trim()) throw new Error("Nomes inválidos");
 	return d;
 }).handler(renameCategory_createServerFn_handler, async ({ data }) => {
-	const { assertPassword } = await import("./auth-cookies.server-CaMv2Sys.mjs");
+	const { assertAuth } = await import("./auth-cookies.server-ONrsHARe.mjs");
 	const { renameCategoryRows } = await import("./sheets.server-BAIrcMcb.mjs");
-	assertPassword(data.password);
+	assertAuth(data.token);
 	return {
 		ok: true,
 		count: await renameCategoryRows(data.oldName, data.newName)
@@ -79,12 +79,12 @@ var deleteFormula_createServerFn_handler = createServerRpc({
 }, (opts) => deleteFormula.__executeServer(opts));
 var deleteFormula = createServerFn({ method: "POST" }).validator((d) => {
 	if (!d || typeof d.rowIndex !== "number") throw new Error("Dados inválidos");
-	if (typeof d.password !== "string") throw new Error("Senha obrigatória");
+	if (d.token !== void 0 && typeof d.token !== "string") throw new Error("Token inválido");
 	return d;
 }).handler(deleteFormula_createServerFn_handler, async ({ data }) => {
-	const { assertPassword } = await import("./auth-cookies.server-CaMv2Sys.mjs");
+	const { assertAuth } = await import("./auth-cookies.server-ONrsHARe.mjs");
 	const { deleteFormulaRow } = await import("./sheets.server-BAIrcMcb.mjs");
-	assertPassword(data.password);
+	assertAuth(data.token);
 	await deleteFormulaRow(data.rowIndex);
 	return { ok: true };
 });

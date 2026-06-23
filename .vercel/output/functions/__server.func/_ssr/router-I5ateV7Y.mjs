@@ -1,11 +1,11 @@
 import { o as __toESM } from "../_runtime.mjs";
-import { c as HeadContent, d as Outlet, f as lazyRouteComponent, g as useRouter, h as Link, k as redirect, m as createRootRouteWithContext, p as createFileRoute, s as Scripts, u as createRouter } from "../_libs/@tanstack/react-router+[...].mjs";
-import { u as require_react } from "../_libs/@floating-ui/react-dom+[...].mjs";
 import { s as require_jsx_runtime } from "../_libs/@radix-ui/react-arrow+[...].mjs";
-import { c as requireAuth, r as clientIsAuthenticated } from "./auth-Cng1v34u.mjs";
+import { u as require_react } from "../_libs/@floating-ui/react-dom+[...].mjs";
+import { c as HeadContent, d as Outlet, f as lazyRouteComponent, g as useRouter, h as Link, k as redirect, m as createRootRouteWithContext, p as createFileRoute, s as Scripts, u as createRouter } from "../_libs/@tanstack/react-router+[...].mjs";
+import { c as requireAuth, r as clientIsAuthenticated } from "./auth-C8iYyVIi.mjs";
 import { t as QueryClient } from "../_libs/tanstack__query-core.mjs";
 import { r as QueryClientProvider } from "../_libs/tanstack__react-query.mjs";
-//#region node_modules/.nitro/vite/services/ssr/assets/router-DtiPObWO.js
+//#region node_modules/.nitro/vite/services/ssr/assets/router-I5ateV7Y.js
 var import_react = /* @__PURE__ */ __toESM(require_react());
 var import_jsx_runtime = require_jsx_runtime();
 var styles_default = "/assets/styles-BS7n-gb_.css";
@@ -158,7 +158,7 @@ function RootComponent() {
 	});
 }
 var $$splitErrorComponentImporter = () => import("./ativos-Cfu4n0sL.mjs");
-var $$splitComponentImporter$1 = () => import("./ativos-BkBmXtNI.mjs");
+var $$splitComponentImporter$1 = () => import("./ativos-Dz17Ec6T.mjs");
 var Route$1 = createFileRoute("/ativos")({
 	head: () => ({ meta: [
 		{ title: "Fórmula Plus — Fórmulas e Preços" },
@@ -178,7 +178,7 @@ var Route$1 = createFileRoute("/ativos")({
 	component: lazyRouteComponent($$splitComponentImporter$1, "component"),
 	errorComponent: lazyRouteComponent($$splitErrorComponentImporter, "errorComponent")
 });
-var $$splitComponentImporter = () => import("./routes-BPzgt0zw.mjs");
+var $$splitComponentImporter = () => import("./routes-0XGw2S4q.mjs");
 var Route = createFileRoute("/")({
 	head: () => ({ meta: [{ title: "Fórmula Plus — Acesso restrito" }, {
 		name: "description",

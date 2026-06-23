@@ -38,7 +38,7 @@ import {
   Copy,
   Check,
 } from "lucide-react";
-import { clientIsAuthenticated, clientGetPassword, clientClearPassword, logout, requireAuth } from "@/lib/auth";
+import { clientIsAuthenticated, clientGetToken, clientClearToken, logout, requireAuth } from "@/lib/auth";
 import { listFormulas, setPrice, addFormula, renameCategory, deleteFormula } from "@/lib/formulas.functions";
 
 export const Route = createFileRoute("/ativos")({
@@ -133,7 +133,7 @@ function AtivosPage() {
 
   const priceMutation = useMutation({
     mutationFn: (vars: { rowIndex: number; preco: number }) =>
-      setPriceFn({ data: { ...vars, password: clientGetPassword() } }),
+      setPriceFn({ data: { ...vars, token: clientGetToken() } }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["formulas"] });
       setEditing(null);
@@ -150,7 +150,7 @@ function AtivosPage() {
       preco: number;
       ativos: string;
       observacao: string;
-    }) => addFormulaFn({ data: { ...vars, password: clientGetPassword() } }),
+    }) => addFormulaFn({ data: { ...vars, token: clientGetToken() } }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["formulas"] });
       resetAddForm();
@@ -161,7 +161,7 @@ function AtivosPage() {
 
   const renameMutation = useMutation({
     mutationFn: (vars: { oldName: string; newName: string }) =>
-      renameCategoryFn({ data: { ...vars, password: clientGetPassword() } }),
+      renameCategoryFn({ data: { ...vars, token: clientGetToken() } }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["formulas"] });
       setRenamingCategory(null);
@@ -173,7 +173,7 @@ function AtivosPage() {
 
   const deleteMutation = useMutation({
     mutationFn: (vars: { rowIndex: number }) =>
-      deleteFormulaFn({ data: { ...vars, password: clientGetPassword() } }),
+      deleteFormulaFn({ data: { ...vars, token: clientGetToken() } }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["formulas"] });
       setEditing(null);
@@ -263,7 +263,7 @@ function AtivosPage() {
   const logoutFn = useServerFn(logout);
 
   async function onLogout() {
-    clientClearPassword();
+    clientClearToken();
     await logoutFn(); // clears the HTTP-only session cookie server-side
     await router.navigate({ to: "/" });
   }
