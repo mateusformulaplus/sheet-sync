@@ -3,6 +3,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { useMemo, useState, useEffect } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Logo } from "@/components/Logo";
+import logoVc from "@/assets/logo-vc.png";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -367,18 +368,18 @@ function AtivosPage() {
   return (
     <div className="min-h-screen flex flex-col brand-gradient-soft">
       {/* ─── Header ─── */}
-      <header className="bg-card border-b border-border/50 sticky top-0 z-30 shadow-sm">
+      <header className="sticky top-0 z-30 shadow-md border-b border-[#d5c3b7]/30" style={{ backgroundColor: "#D4C2B4" }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="h-16 sm:h-[4.25rem] flex items-center justify-between gap-4">
             {/* Left: logo + name */}
             <div className="flex items-center gap-3 min-w-0">
-              <Logo className="h-9 w-auto sm:h-10 shrink-0" />
+              <img src={logoVc} alt="vc.cliniq" className="h-10 w-10 sm:h-11 sm:w-11 shrink-0 rounded-full object-cover border border-white/20 shadow-sm" />
               <div className="hidden sm:block min-w-0">
-                <p className="text-sm font-bold leading-tight truncate tracking-tight">
+                <p className="text-sm font-bold leading-tight truncate tracking-tight text-neutral-800 font-display">
                   Portal de Fórmulas
                 </p>
-                <p className="text-[0.7rem] text-muted-foreground leading-tight mt-0.5">
-                  Dra. Francine
+                <p className="text-[0.7rem] text-neutral-600 leading-tight mt-0.5 font-medium tracking-wide">
+                  Dra. Francine · vc.cliniq
                 </p>
               </div>
             </div>
@@ -390,7 +391,7 @@ function AtivosPage() {
                   variant="outline"
                   size="sm"
                   asChild
-                  className="hidden sm:inline-flex rounded-xl border-border/60 hover:bg-accent/60 transition-all"
+                  className="hidden sm:inline-flex rounded-xl bg-white/45 hover:bg-white/70 text-neutral-800 border-white/30 hover:border-white/50 transition-all font-medium"
                 >
                   <a href={data.sheetUrl} target="_blank" rel="noreferrer">
                     <ExternalLink className="h-3.5 w-3.5 mr-1.5" />
@@ -403,19 +404,19 @@ function AtivosPage() {
                 size="sm"
                 onClick={() => refetch()}
                 disabled={isFetching}
-                className="rounded-xl hover:bg-accent/60 transition-all"
+                className="rounded-xl text-neutral-700 hover:text-neutral-900 hover:bg-white/30 transition-all"
               >
                 <RefreshCw
                   className={`h-4 w-4 ${isFetching ? "animate-spin" : ""}`}
                 />
                 <span className="hidden sm:inline ml-1.5 text-xs">Atualizar</span>
               </Button>
-              <div className="w-px h-5 bg-border/60 mx-0.5 hidden sm:block" />
+              <div className="w-px h-5 bg-white/30 mx-0.5 hidden sm:block" />
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={onLogout}
-                className="rounded-xl text-muted-foreground hover:text-foreground hover:bg-accent/60 transition-all"
+                className="rounded-xl text-neutral-700 hover:text-neutral-900 hover:bg-white/30 transition-all"
               >
                 <LogOut className="h-4 w-4" />
                 <span className="hidden sm:inline ml-1.5 text-xs">Sair</span>

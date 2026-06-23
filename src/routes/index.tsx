@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { login, clientIsAuthenticated, clientSetToken, requireAuth } from "@/lib/auth";
-import { Lock, ArrowRight, ShieldCheck } from "lucide-react";
+import { Lock, ArrowRight, ShieldCheck, Eye, EyeOff } from "lucide-react";
 
 export const Route = createFileRoute("/")(  {
   head: () => ({
@@ -35,6 +35,7 @@ function LoginPage() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -82,7 +83,7 @@ function LoginPage() {
               Portal de Fórmulas
             </h1>
             <p className="mt-2 text-sm text-muted-foreground max-w-[18rem] leading-relaxed">
-              Acesso restrito à equipe autorizada
+              Plataforma exclusiva para consulta de fórmulas magistrais
             </p>
           </div>
 
@@ -99,17 +100,31 @@ function LoginPage() {
                 <Lock className="h-3.5 w-3.5 text-muted-foreground" />
                 Senha de acesso
               </Label>
-              <Input
-                id="password"
-                type="password"
-                autoComplete="current-password"
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                autoFocus
-                className="h-12 bg-white/50 border-border/70 rounded-xl text-base placeholder:text-muted-foreground/50 transition-all duration-200 focus:bg-white focus:border-ring focus:ring-2 focus:ring-ring/20"
-              />
+              <div className="relative">
+                <Input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  autoComplete="current-password"
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  autoFocus
+                  className="h-12 w-full bg-white/50 border-border/70 rounded-xl pr-12 text-base placeholder:text-muted-foreground/50 transition-all duration-200 focus:bg-white focus:border-ring focus:ring-2 focus:ring-ring/20"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors p-1 rounded-md focus:outline-none focus:ring-2 focus:ring-ring/25"
+                  aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
+                >
+                  {showPassword ? (
+                    <EyeOff className="h-4 w-4" />
+                  ) : (
+                    <Eye className="h-4 w-4" />
+                  )}
+                </button>
+              </div>
             </div>
 
             {error && (
